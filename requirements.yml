@@ -1,0 +1,48 @@
+- name: Playbook para Garantir Dependencias da Solução
+  hosts: all
+  vars:
+    ansible_python_interpreter: /usr/bin/python
+  tasks:
+    - name: "Debian: Instalando Pacotes Necessários"
+      apt: 
+        name: ["apt-transport-https","ca-certificates","curl","gnupg-agent","software-properties-common","python3","python3-pip"]
+        update_cache: yes
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: "RedHat: Instalando Pacotes Necessários"
+      package:
+        name: ["yum-utils","python3","python3-pip"]
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: "Debian: Docker - Adicionando Chave do Repositório"
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+      when: ansible_os_family == "Debian"
+
+    - name: "Debian: Docker - Adicionando Repositório"
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release}} stable"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: "RedHat: Docker - Adicionando Repositório"
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/
+      when: ansible_os_family == "RedHat"
+
+    - name: "Instalando Docker"
+      package:
+        name: ['docker-ce','docker-compose']
+        update_cache: yes
+        state: present
+      notify: docker-service
+
+  handlers:
+    - name: docker-service
+      systemd:
+        name: docker
+        enabled: yes 
+        state: started
