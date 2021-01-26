@@ -7,7 +7,7 @@ Objetivo do projeto é executar um ambiente interligando 2 aplicações:
 
 ### Solução com Docker Compose
 
-A Solução foi implementada em 4 Etapas:
+A Solução foi implementada em 3 Etapas:
 
 * Criação da Playbook para garantir as dependências (Docker e Docker-Compose)
 * Criação dos Dockerfiles para as aplicações em NodeJS e Python.
