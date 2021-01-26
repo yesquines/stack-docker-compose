@@ -1,0 +1,14 @@
+FROM python:2.7-alpine
+MAINTAINER Yago Almeida
+
+WORKDIR /app
+
+COPY app-python/ /app
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -q --spider localhost:8000/health || exit 1
+
+ENTRYPOINT ./wait-for $RABBITMQ_HOST:$RABBITMQ_PORT python app.py
