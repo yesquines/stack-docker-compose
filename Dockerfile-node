@@ -1,0 +1,10 @@
+FROM node:6.0.0-slim
+MAINTAINER Yago Almeida
+
+WORKDIR /app
+
+COPY app-node/ /app
+
+RUN npm install 
+
+ENTRYPOINT ./wait-for-it.sh $MYSQL_HOST:3306 -t 0 -- ./wait-for-it.sh $RABBITMQ_HOST:5672 -t 0 -- node app.js
