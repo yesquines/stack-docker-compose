@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+HOST=$(printf "%s\n" "$1"| cut -d : -f 1)
+PORT=$(printf "%s\n" "$1"| cut -d : -f 2)
+shift 1
+COMMAND=$@
+
+until nc -z $HOST $PORT &> /dev/null; 
+do
+   echo "Waiting to $HOST:$PORT"
+   sleep 2
+done
+
+echo "$HOST:$PORT is up"
+exec $COMMAND
